@@ -1,0 +1,42 @@
+version: "2"
+services:
+  # The Web Server
+  web:
+    build:
+      context: .
+      dockerfile: .docker/web.Dockerfile
+    volumes:
+      - .:/var/www/html/laravel-app
+    working_dir: /var/www/html/laravel-app
+    ports:
+      - "8000:80"
+    links:
+      - app
+
+  # The Application
+  app:
+    build:
+      context: .
+      dockerfile: .docker/app.Dockerfile
+    working_dir: /var/www/html/laravel-app
+    volumes:
+      - .:/var/www/html/laravel-app
+    environment:
+      - VIRTUAL_HOST=laravel-app.me
+    # links:
+    #   - database
+    # environment:
+    #   - "DB_PORT=3306"
+    #   - "DB_HOST=database"
+  # The Database
+  # database:
+  #   image: mysql:5.7
+  #   environment:
+  #       MYSQL_ROOT_PASSWORD: root
+  #       MYSQL_DATABASE: kh_paperlust_local
+  #   ports:
+  #       - "33061:3306"
+  cache:
+    image: redis:3.0
+    ports:
+      - "63791:6379"
